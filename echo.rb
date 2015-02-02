@@ -7,6 +7,7 @@ module Echo
  end
 
  def receive_data data
+   puts "Got #{data.length}: #{data.strip.gsub /\s+/, ' '}\n"
    send_data "Got #{data.length}: #{data.strip.gsub /\s+/, ' '}\n"
  end
 
