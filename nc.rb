@@ -1,5 +1,11 @@
+#
+# Simple NetCat
+#
+# Fails on Windows (stdio)
+# See https://groups.google.com/forum/#!topic/eventmachine/5rDIOA2uOoA
+#
+
 require 'eventmachine'
-require 'byebug'
 
 module Stdio
   attr_accessor :ne
@@ -29,7 +35,7 @@ module Dst
 
   def receive_data data
     puts "net...", data
-    
+
 #    usr.send_data data
   end
 
