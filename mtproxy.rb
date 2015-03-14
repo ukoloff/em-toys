@@ -1,15 +1,12 @@
 require 'Socket'
 
-puts "Listening..."
+puts "Proxy is listening..."
 
-sock=Addrinfo.tcp('127.0.0.1', 8082).listen
-
-while true
-  Thread.start sock.accept do |client, addr|
-    puts "Connected from #{addr.ip_address}:#{addr.ip_port}"
+Socket.tcp_server_loop 'localhost', 8082 do |client, addr|
+  puts "Connected from #{addr.ip_address}:#{addr.ip_port}"
+  Thread.new client do |client|
     srv=nil
     Thread.new do |t|
-      # t.abort_on_exception=true
       puts "Connecting to server..."
       srv=Socket.tcp 'localhost', 8081
       puts "Connected to server"
@@ -19,6 +16,7 @@ while true
         client.write s
       end
       puts "Server closed"
+      client.close
     end
     until client.eof
       s=client.readpartial 4096
@@ -27,5 +25,6 @@ while true
     end
     puts "Client closed"
     client.close
+    srv.close if srv
   end
 end
