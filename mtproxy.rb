@@ -11,7 +11,7 @@ while true
     Thread.new do |t|
       # t.abort_on_exception=true
       puts "Connecting to server..."
-      srv=Addrinfo.tcp('127.0.0.1', 8081).connect
+      srv=Socket.tcp 'localhost', 8081
       puts "Connected to server"
       until srv.eof do
         s=srv.readpartial 4096
