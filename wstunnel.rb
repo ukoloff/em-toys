@@ -6,7 +6,7 @@ Host='ya.ru'
 
 puts "WSTunnel is listening..."
 
-Thread.abort_on_exception=true
+# Thread.abort_on_exception=true
 
 def reheaders headers
   return headers if headers.length<1
@@ -39,7 +39,7 @@ def req client
   Thread.new do |t|
     until srv.eof do
       s=srv.readpartial 4096
-      puts "< #{s.length}"
+      # puts "< #{s.length}"
       client.write s
     end
     puts "Server closed"
@@ -47,7 +47,7 @@ def req client
   end
   until client.eof
     s=client.readpartial 4096
-    puts "> #{s.length}"
+    # puts "> #{s.length}"
     srv.write s
   end
   puts "Client closed"
