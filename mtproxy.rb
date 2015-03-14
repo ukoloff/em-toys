@@ -13,17 +13,19 @@ while true
       puts "Connecting to server..."
       srv=Addrinfo.tcp('127.0.0.1', 8081).connect
       puts "Connected to server"
-      while true do
+      until srv.eof do
         s=srv.readpartial 4096
         puts "< #{s.length}"
         client.write s
       end
+      puts "Server closed"
     end
-    while true
+    until client.eof
       s=client.readpartial 4096
       puts "> #{s.length}"
       srv.write s
     end
+    puts "Client closed"
     client.close
   end
 end

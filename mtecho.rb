@@ -8,11 +8,12 @@ while true
   Thread.start sock.accept do |client, addr|
     puts "Connected from #{addr.ip_address}:#{addr.ip_port}"
     client.puts "Hello!"
-    while true
+    until client.eof
       s=client.readpartial 4096
       puts "Got #{s.length} byte"
       client.puts "Got: #{s}"
     end
+    puts "Connection ended"
     client.close
   end
 end
