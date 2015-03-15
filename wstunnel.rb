@@ -1,5 +1,5 @@
 require 'Socket'
-require 'openssl'
+#require 'openssl'
 require 'openssl/win/root'
 
 Host='ya.ru'
@@ -31,9 +31,10 @@ def req client
   puts "New headers: ", headers.map{|h| "\t#{h}"}
 
   puts "Connecting to server..."
+  srv=Socket.tcp Host, 443
   ctx=OpenSSL::SSL::SSLContext.new
-  ctx.verify_mode=OpenSSL::SSL::VERIFY_PEER
-  srv=OpenSSL::SSL::SSLSocket.new Socket.tcp(Host, 443), ctx
+  ctx.set_params verify_mode: OpenSSL::SSL::VERIFY_PEER
+  srv=OpenSSL::SSL::SSLSocket.new srv, ctx
   srv.hostname=Host if srv.respond_to? :hostname=
   srv.connect
   puts "Connected to server; #{srv.verify_result}"
