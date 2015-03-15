@@ -1,12 +1,12 @@
 require 'Socket'
 require 'openssl'
-# require 'openssl/win/root'
+require 'openssl/win/root'
 
 Host='ya.ru'
 
 puts "WSTunnel is listening..."
 
-# Thread.abort_on_exception=true
+Thread.abort_on_exception=true
 
 def reheaders headers
   return headers if headers.length<1
@@ -31,10 +31,12 @@ def req client
   puts "New headers: ", headers.map{|h| "\t#{h}"}
 
   puts "Connecting to server..."
-  srv=OpenSSL::SSL::SSLSocket.new Socket.tcp Host, 443
+  ctx=OpenSSL::SSL::SSLContext.new
+  ctx.verify_mode=OpenSSL::SSL::VERIFY_PEER
+  srv=OpenSSL::SSL::SSLSocket.new Socket.tcp(Host, 443), ctx
   srv.hostname=Host if srv.respond_to? :hostname=
   srv.connect
-  puts "Connected to server"
+  puts "Connected to server; #{srv.verify_result}"
   srv.write headers*"\r\n"+"\r\n\r\n"
   Thread.new do |t|
     until srv.eof do
