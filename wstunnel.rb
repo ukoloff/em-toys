@@ -65,9 +65,12 @@ class Tunnel
 
   def cloop
     h=headerz! headerz
-    puts "New headers: ", h.map{|h| "\t#{h}"}
+    if h.length<1
+      @client.write "HTTP/1.0 500 Invalid request\r\n"
+      return
+    end
+    @headers=h
     @server=connect!
-    @server.write h*"\r\n"+"\r\n"*2
     @t2=Thread.new{sloop!}
     @server.write @client.readpartial Chunk until @client.eof
   end
@@ -86,6 +89,8 @@ class Tunnel
   end
 
   def sloop
+    @server.write @headers*"\r\n"+"\r\n"*2
+    @headers=nil
     @client.write @server.readpartial Chunk until @server.eof
   end
 
