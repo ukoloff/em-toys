@@ -16,6 +16,7 @@ class Tunnel
   end
 
   def initialize client
+    @host=Host
     @client=client
     @t1=Thread.new{cloop!}
   end
@@ -47,16 +48,16 @@ class Tunnel
     return headers if headers.length<1
     verb=headers.shift
     [verb]+
-    %w(Host Origin).map{|h| "#{h}: #{Host}"}+
+    %w(Host Origin).map{|h| "#{h}: #{@host}"}+
     headers.reject{|h| /^(?:host|origin):/i.match h}
   end
 
   def connect!
-    srv=Socket.tcp Host, 443
+    srv=Socket.tcp @host, 443
     ctx=OpenSSL::SSL::SSLContext.new
     ctx.set_params verify_mode: OpenSSL::SSL::VERIFY_PEER
     srv=OpenSSL::SSL::SSLSocket.new srv, ctx
-    srv.hostname=Host if srv.respond_to? :hostname=
+    srv.hostname=@host if srv.respond_to? :hostname=
     srv.connect
     puts "Connected to server; #{srv.verify_result}"
     srv
