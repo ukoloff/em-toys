@@ -9,7 +9,7 @@ class Proxy
     puts "Proxy is listening..."
     Socket.tcp_server_loop 'localhost', 8082 do |client, addr|
       puts "Connected from #{addr.ip_address}:#{addr.ip_port}"
-      self.new client
+      new client
     end
   end
 
