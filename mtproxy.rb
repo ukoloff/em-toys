@@ -15,22 +15,33 @@ class Proxy
 
   def initialize client
     @client=client
-    @t1=Thread.new{cloop}
+    @t1=Thread.new{cloop!}
   end
 
   # Client loop
   def cloop
     puts "Connecting to server..."
     @server=Socket.tcp 'localhost', 8081
-    puts "Connected to server"
-    @t2=Thread.new{sloop}
+    @t2=Thread.new{sloop!}
     until @client.eof
       s=@client.readpartial Chunk
       puts "> #{s.length}"
       @server.write s
     end
-    puts "Client closed"
-    @t2.exit
+  end
+
+  # Protected client loop
+  def cloop!
+    begin
+      puts "<Client>"
+      cloop
+    rescue=>e
+      puts "Client error: #{e}"
+    ensure
+      puts "</Client>"
+      @client.close
+      @t2.exit if @t2
+    end
   end
 
   # Server loop
@@ -40,8 +51,20 @@ class Proxy
       puts "< #{s.length}"
       @client.write s
     end
-    puts "Server closed"
-    @t1.exit
+  end
+
+  # Protected server loop
+  def sloop!
+    begin
+      puts "<Server>"
+      sloop
+    rescue=>e
+      puts "Server error: #{e}"
+    ensure
+      puts "</Server>"
+      @server.close
+      @t1.exit
+    end
   end
 
   run!
