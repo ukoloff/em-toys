@@ -4,6 +4,10 @@ class NetCat
   Chunk=0x10000
 
   def self.run!
+    STDOUT.sync=true
+    STDIN.binmode
+    STDOUT.binmode
+
     @t1=Thread.new{new.sloop}
     @t1.join
   end
