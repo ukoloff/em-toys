@@ -5,6 +5,7 @@ class NetCat
 
   def self.run!
     STDOUT.sync=true
+    STDERR.sync=true
     STDIN.binmode
     STDOUT.binmode
 
@@ -22,7 +23,7 @@ class NetCat
         @client.write STDIN.readpartial Chunk
       end
     rescue=>e
-      STDOUT.puts "Client error #{e}"
+      STDERR.puts "Client error #{e}"
     ensure
       @t1.exit
     end
@@ -36,7 +37,7 @@ class NetCat
         STDOUT.write @client.readpartial Chunk
       end
     rescue=>e
-      STDOUT.puts "Server error #{e}"
+      STDERR.puts "Server error #{e}"
     ensure
       @client.close if @client
       @t2.exit if @t2
