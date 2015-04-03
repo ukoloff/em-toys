@@ -8,7 +8,11 @@ class NetCat
     STDIN.binmode
     STDOUT.binmode
 
-    @t1=Thread.new{new.sloop}
+    new
+  end
+
+  def initialize
+    @t1=Thread.new{sloop}
     @t1.join
   end
 
